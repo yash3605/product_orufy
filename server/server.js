@@ -1,6 +1,5 @@
 const express = require('express');
 const cors = require('cors');
-const path = require('path');
 const dotenv = require('dotenv');
 const connectDB = require('./config/db');
 
@@ -40,18 +39,10 @@ app.get('/api/health', (req, res) => {
   res.json({ status: 'ok', timestamp: new Date().toISOString() });
 });
 
-// Serve static files in production
-if (process.env.NODE_ENV === 'production') {
-  app.use(express.static(path.join(__dirname, '../client/dist')));
-
-  app.get('/{*path}', (req, res) => {
-    res.sendFile(path.join(__dirname, '../client/dist/index.html'));
-  });
-} else {
-  app.get('/', (req, res) => {
-    res.json({ message: 'Productr API is running' });
-  });
-}
+// Root endpoint
+app.get('/', (req, res) => {
+  res.json({ message: 'Productr API is running' });
+});
 
 // Error handling middleware
 app.use((err, req, res, next) => {
