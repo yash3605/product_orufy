@@ -1,22 +1,11 @@
-const nodemailer = require('nodemailer');
+const { Resend } = require('resend');
 
 const sendOTP = async (email, otp) => {
   try {
-    const transporter = nodemailer.createTransport({
-      host: 'smtp.gmail.com',
-      port: 587,
-      secure: false,
-      auth: {
-        user: process.env.EMAIL_USER,
-        pass: process.env.EMAIL_PASS
-      },
-      tls: {
-        rejectUnauthorized: false
-      }
-    });
+    const resend = new Resend(process.env.RESEND_API_KEY);
 
-    const mailOptions = {
-      from: process.env.EMAIL_USER,
+    await resend.emails.send({
+      from: 'Productr <onboarding@resend.dev>',
       to: email,
       subject: 'Your Productr OTP Verification Code',
       html: `
@@ -29,9 +18,8 @@ const sendOTP = async (email, otp) => {
           <p style="color: #666; font-size: 12px;">This OTP will expire in 5 minutes.</p>
         </div>
       `
-    };
+    });
 
-    await transporter.sendMail(mailOptions);
     console.log(`OTP sent to ${email}`);
     return true;
   } catch (error) {
