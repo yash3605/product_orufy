@@ -9,8 +9,20 @@ dotenv.config();
 const app = express();
 
 // CORS configuration
+const allowedOrigins = [
+  process.env.FRONTEND_URL,
+  'https://product-orufy.vercel.app',
+  'http://localhost:5173'
+].filter(Boolean);
+
 const corsOptions = {
-  origin: process.env.FRONTEND_URL || '*',
+  origin: (origin, callback) => {
+    if (!origin || allowedOrigins.includes(origin) || process.env.FRONTEND_URL === '*') {
+      callback(null, true);
+    } else {
+      callback(new Error('Not allowed by CORS'));
+    }
+  },
   credentials: true,
   optionsSuccessStatus: 200
 };
